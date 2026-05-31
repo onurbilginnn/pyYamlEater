@@ -4,7 +4,7 @@ class FileSystem:
 
     def read_file(self) -> str:
         with open(self.file_path, 'r') as file:
-            return file.read()
+            return file.readlines()
     
     def write_file(self, content: str) -> None:
         with open(self.file_path, 'w') as file:
