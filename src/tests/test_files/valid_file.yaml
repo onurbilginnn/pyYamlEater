@@ -1,0 +1,19 @@
+all:
+  children:
+    control_nodes:
+      hosts:
+        node1:
+          custom_hostname: <VALUE>
+          management_network:
+            network1:
+              ip: <VALUE>
+        node2:
+          custom_hostname: <VALUE>
+          management_network:
+            network1:
+              ip: <VALUE>
+        node3:
+          custom_hostname: <VALUE>
+          management_network:
+            network1:
+              ip: <VALUE>
