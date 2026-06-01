@@ -12,9 +12,13 @@
               management_network:
                 network1:
                   ip: <VALUE>
+            network1: |
+              tester: 
+              and_tested: 
+                 - list item 1
+                 - list item 2
             node3:
               custom_hostname: <VALUE>
               management_network:
                 network1:
                   ip: <VALUE>
-  faulty_line: <VALUE>
