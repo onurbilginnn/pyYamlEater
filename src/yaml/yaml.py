@@ -20,7 +20,8 @@ class Yaml:
                 line_number += 1
                 continue
             yaml_row = YamlRow(line[:-1], line_number)
-            if yaml_row.type == YamlRowType.KEY_VALUE_ON_NEXT_LINE:
+            if yaml_row.type == YamlRowType.KEY_VALUE_ON_NEXT_LINE or \
+               yaml_row.type == YamlRowType.ARRAY_ITEM_VALUE_ON_NEXT_LINE:
                 key, _ = yaml_row.key_value
                 yaml_row.key_value = (key, "")
                 j = index + 1
@@ -49,8 +50,19 @@ class Yaml:
         return yaml_rows
     
     def validate_yaml(self):
+        yaml_list_start_indent = -1
         for index, current_row in enumerate(self.yaml_rows):
             next_row = self.yaml_rows[index + 1] if index < len(self.yaml_rows) - 1 else None
+            if self.is_array_item(current_row):
+                # Entering to list
+                if yaml_list_start_indent == -1:
+                    yaml_list_start_indent = current_row.indent
+                elif current_row.indent != yaml_list_start_indent:
+                    raise ValueError(f"Error: List items can not have lower indent than parent list key, key: {current_row.key_value[0]} at line: {current_row.line_number}")
+            else:
+                # Exit from list
+                if yaml_list_start_indent != -1 and current_row.indent < yaml_list_start_indent:
+                    yaml_list_start_indent = -1
             if self.is_current_indent_lower_than_root(current_row):
                 raise ValueError(f"Error: Can not add lower line indent than first line indent, key: {current_row.key_value[0]} at line: {current_row.line_number}")
             if self.does_key_value_item_have_child(current_row, next_row):
@@ -71,6 +83,12 @@ class Yaml:
     
     def does_child_text_has_lower_indent(self, current_row: YamlRow, next_row: YamlRow) -> bool:
         return next_row and next_row.indent < current_row.indent and current_row.key_value[1] == YamlKeyCharacter.VERTICALBAR.value
+    
+    def is_array_item(self, current_row: YamlRow) -> bool:
+        return current_row.type == YamlRowType.ARRAY_ITEM or \
+                current_row.type == YamlRowType.ARRAY_ITEM_WITH_VALUE or \
+                current_row.type == YamlRowType.ARRAY_ITEM_WITH_NESTED_KEYS or \
+                current_row.type == YamlRowType.ARRAY_ITEM_VALUE_ON_NEXT_LINE
     
     def __repr__(self):
         result = ""

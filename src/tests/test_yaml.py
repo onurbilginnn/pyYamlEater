@@ -34,8 +34,23 @@ class TestTextNode(unittest.TestCase):
         yaml5 = Yaml(valid_yaml_contents5)
         self.assertEqual(yaml5.yaml_rows[17].type, YamlRowType.ARRAY_ITEM)
         self.assertEqual(yaml5.yaml_rows[15].type, YamlRowType.KEY_WITH_NESTED_KEYS)
-
+        valid_yaml_contents6 = YamlFile('src/tests/test_files/valid_file7.yaml').read_file()
+        yaml6 = Yaml(valid_yaml_contents6)
+        self.assertEqual(yaml6.yaml_rows[16].type, YamlRowType.ARRAY_ITEM_VALUE_ON_NEXT_LINE)
+        self.assertEqual(yaml6.yaml_rows[16].key_value[1], "where is my ip\nis it fine")
+    
         
+    def test_yaml_parser_array(self):
+        valid_yaml_contents = YamlFile('src/tests/test_files/valid_file_array.yaml').read_file()
+        yaml = Yaml(valid_yaml_contents)
+        
+    def test_validate_yaml_array_errors(self):
+        invalid_yaml_contents = YamlFile('src/tests/test_files/invalid_file_array.yaml').read_file()
+        yaml = Yaml(invalid_yaml_contents)
+        with self.assertRaises(ValueError) as context:
+            yaml.validate_yaml()
+        self.assertIn("Error: List items can not have lower indent than parent list key, key:", context.exception.args[0])
+
     def test_validate_yaml_errors(self):
         invalid_yaml_contents = YamlFile('src/tests/test_files/invalid_file.yaml').read_file()
         yaml = Yaml(invalid_yaml_contents)

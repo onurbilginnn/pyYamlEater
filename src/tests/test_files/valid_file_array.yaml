@@ -1,0 +1,24 @@
+all:
+  children:
+    control_nodes:
+      hosts:
+        node1:
+          custom_hostname: <VALUE>
+        management_network:
+            network1:
+              ip: <VALUE>
+        node2:
+          custom_hostname: <VALUE>
+          management_network:
+            network1:
+              ip: <VALUE>
+          management_network2:
+            network1:
+              - networking1: |
+                 where is my ip
+                  is it fine
+              - networking2: test
+              - networking3: 
+                  test: teseter
+        node3:
+          custom_hostname: <VALUE>
