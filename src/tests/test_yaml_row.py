@@ -66,7 +66,11 @@ class TestTextNode(unittest.TestCase):
         test_yaml_row12 = YamlRow("test: | ")
         self.assertEqual(test_yaml_row12.key_value[0], "test")
         self.assertEqual(test_yaml_row12.key_value[1], "|")
-        self.assertEqual(test_yaml_row12.type, YamlRowType.KEY_VALUE_ON_NEXT_LINE)    
+        self.assertEqual(test_yaml_row12.type, YamlRowType.KEY_VALUE_ON_NEXT_LINE)  
+        test_yaml_row5 = YamlRow("- test: |")
+        self.assertEqual(test_yaml_row5.key_value[0], "- test")
+        self.assertEqual(test_yaml_row5.key_value[1], "|")
+        self.assertEqual(test_yaml_row5.type, YamlRowType.ARRAY_ITEM_VALUE_ON_NEXT_LINE)      
 
 if __name__ == "__main__":
     unittest.main()

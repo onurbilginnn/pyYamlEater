@@ -28,6 +28,8 @@ class YamlRow:
             if YamlKeyCharacter.COLON.value in stripped_raw:
                 key, value = self.extract_key_value(stripped_raw)
                 self.set_type(YamlRowType.ARRAY_ITEM_WITH_NESTED_KEYS) if value == "" else self.set_type(YamlRowType.ARRAY_ITEM_WITH_VALUE)
+                if value == YamlKeyCharacter.VERTICALBAR.value:
+                    self.set_type(YamlRowType.ARRAY_ITEM_VALUE_ON_NEXT_LINE)
                 return key, value
             else:
                 key, value = self.extract_key_value(stripped_raw)
