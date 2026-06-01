@@ -15,6 +15,5 @@
             node3:
               custom_hostname: <VALUE>
               management_network:
-                network1:
+            network1:
                   ip: <VALUE>
-  faulty_line: <VALUE>

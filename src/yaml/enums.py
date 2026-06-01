@@ -15,7 +15,8 @@ class YamlRowType(Enum):
     ARRAY_ITEM = 4
     ARRAY_ITEM_WITH_VALUE = 5
     ARRAY_ITEM_WITH_NESTED_KEYS = 6
-    COMMENT = 7
+    ONLY_VALUE = 7
+    COMMENT = 8
     
 class YamlRowEndsWith(Enum):
     COLON = ":"

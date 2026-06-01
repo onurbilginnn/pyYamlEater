@@ -3,8 +3,10 @@ all:
     control_nodes:
       hosts:
         node1:
+
+
           custom_hostname: <VALUE>
-          management_network:
+        management_network:
             network1:
               ip: <VALUE>
         node2:
