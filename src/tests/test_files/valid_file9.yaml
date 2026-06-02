@@ -1,0 +1,25 @@
+  all: # 1
+    children: # 2
+      control_nodes: # 3
+              hosts: # 4
+                node1: # 5
+                  custom_hostname: <VALUE> # 6
+                  management_network: # 6
+                    network1: # 7
+                      ip: <VALUE> # 8
+                node2: # 5
+                        custom_hostname: <VALUE> # 6
+                        management_network: # 6
+                          network1: # 7
+                            ip: <VALUE> # 8
+                network1: | # 5
+                  tester: 
+                  and_tested: 
+                    - list item 1
+                    - list item 2
+                # commenter tester
+                node3: # 5
+                  custom_hostname: <VALUE> # 6
+                  management_network: # 6
+                    network1: # 7
+                      ip: <VALUE> # 8
