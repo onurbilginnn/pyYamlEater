@@ -1,24 +1,25 @@
-    all:
-      children:
-        control_nodes:
-          hosts:
-            node1:
+    all: # 1
+      children: # 2
+        control_nodes: # 3
+          hosts: # 4
+            node1: # 5
               custom_hostname: <VALUE>
-              management_network:
-                network1:
-                  ip: <VALUE>
-            node2:
-              custom_hostname: <VALUE>
-              management_network:
-                network1:
-                  ip: <VALUE>
-            network1: |
+              management_network: # 6
+                network1: # 7
+                  ip: <VALUE> # 8
+            node2: # 5
+              custom_hostname: <VALUE> # 6
+              management_network: # 6
+                network2: # 7
+                  ip: <VALUE> # 8
+            network3: | # 5
               tester: 
               and_tested: 
-                 - list item 1
-                 - list item 2
-            node3:
-              custom_hostname: <VALUE>
-              management_network:
-                network1:
-                  ip: <VALUE>
+                 - list item 1 
+                 - list item 2 
+            node3: # 5
+              custom_hostname: <VALUE> # 6
+              management_network: # 6
+                network4: # 7
+                  ip: <VALUE> # 8
+                  # commenter tester

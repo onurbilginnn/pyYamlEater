@@ -19,7 +19,6 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(yaml.yaml_rows[17].key_value[0], "network1")
         self.assertEqual(yaml.yaml_rows[0].type, YamlRowType.KEY_WITH_NESTED_KEYS)
         self.assertEqual(yaml.yaml_rows[0].type, YamlRowType.KEY_WITH_NESTED_KEYS)
-        print(yaml)
         valid_yaml_contents2 = YamlFile('src/tests/test_files/valid_file3.yaml').read_file()
         yaml2 = Yaml(valid_yaml_contents2)
         self.assertEqual(yaml2.yaml_rows[20].type, YamlRowType.ARRAY_ITEM_WITH_NESTED_KEYS)
@@ -38,36 +37,82 @@ class TestTextNode(unittest.TestCase):
         yaml6 = Yaml(valid_yaml_contents6)
         self.assertEqual(yaml6.yaml_rows[16].type, YamlRowType.ARRAY_ITEM_VALUE_ON_NEXT_LINE)
         self.assertEqual(yaml6.yaml_rows[16].key_value[1], "where is my ip\nis it fine")
-    
+
         
     def test_yaml_parser_array(self):
         valid_yaml_contents = YamlFile('src/tests/test_files/valid_file_array.yaml').read_file()
         yaml = Yaml(valid_yaml_contents)
+        self.assertEqual(yaml.yaml_rows[17].type, YamlRowType.ARRAY_ITEM_WITH_VALUE)
+        self.assertEqual(yaml.yaml_rows[18].key_value[1], "")
         
     def test_validate_yaml_array_errors(self):
         invalid_yaml_contents = YamlFile('src/tests/test_files/invalid_file_array.yaml').read_file()
-        yaml = Yaml(invalid_yaml_contents)
         with self.assertRaises(ValueError) as context:
-            yaml.validate_yaml()
+            Yaml(invalid_yaml_contents)
         self.assertIn("Error: List items can not have lower indent than parent list key, key:", context.exception.args[0])
 
     def test_validate_yaml_errors(self):
         invalid_yaml_contents = YamlFile('src/tests/test_files/invalid_file.yaml').read_file()
-        yaml = Yaml(invalid_yaml_contents)
         with self.assertRaises(ValueError) as context:
-            yaml.validate_yaml()
+            Yaml(invalid_yaml_contents)
         self.assertIn("Error: Can not add lower line indent than first line indent", context.exception.args[0])
         invalid_yaml_contents2 = YamlFile('src/tests/test_files/invalid_file2.yaml').read_file()
-        yaml2 = Yaml(invalid_yaml_contents2)
         with self.assertRaises(ValueError) as context:
-            yaml2.validate_yaml()
+            Yaml(invalid_yaml_contents2)
         self.assertIn("Error: Key value item can not have child item", context.exception.args[0])
         invalid_yaml_contents3 = YamlFile('src/tests/test_files/invalid_file3.yaml').read_file()
-        yaml3 = Yaml(invalid_yaml_contents3)
         with self.assertRaises(ValueError) as context:
-            yaml3.validate_yaml()
+            Yaml(invalid_yaml_contents3)
         self.assertIn("Error: Child item can not have lower indent than parent item", context.exception.args[0])
-       
+
+    def test_validate_yaml(self):
+        valid_yaml_contents = YamlFile('src/tests/test_files/valid_file.yaml').read_file()
+        yaml = Yaml(valid_yaml_contents)
+        yaml.validate_yaml()
+        valid_yaml_contents2 = YamlFile('src/tests/test_files/valid_file5.yaml').read_file()
+        yaml2 = Yaml(valid_yaml_contents2)
+        yaml2.validate_yaml()
+    
+        
+    def test_find_yaml_levels(self):
+        valid_yaml_contents = YamlFile('src/tests/test_files/valid_file5.yaml').read_file()
+        yaml = Yaml(valid_yaml_contents)
+        self.assertEqual(yaml.yaml_rows[0].level, 1)
+        self.assertEqual(yaml.yaml_rows[1].level, 2)
+        self.assertEqual(yaml.yaml_rows[2].level, 3)
+        self.assertEqual(yaml.yaml_rows[3].level, 4)
+        self.assertEqual(yaml.yaml_rows[14].level, 5)
+        valid_yaml_contents2 = YamlFile('src/tests/test_files/valid_file9.yaml').read_file()
+        yaml2 = Yaml(valid_yaml_contents2)
+        self.assertEqual(yaml2.yaml_rows[0].level, 1)
+        self.assertEqual(yaml2.yaml_rows[1].level, 2)
+        self.assertEqual(yaml2.yaml_rows[6].level, 6)
+        self.assertEqual(yaml2.yaml_rows[9].level, 5)
+        self.assertEqual(yaml2.yaml_rows[14].level, 5)
+        self.assertEqual(yaml2.yaml_rows[19].level, 8)
+        
+    
+    def test_format_yaml(self):
+        valid_yaml_contents = YamlFile('src/tests/test_files/valid_file5.yaml').read_file()
+        yaml = Yaml(valid_yaml_contents)
+        formatted_yaml = yaml.format_yaml()
+        self.assertEqual(formatted_yaml[0].indent, 0)
+        self.assertEqual(formatted_yaml[1].indent, 2)
+        self.assertEqual(formatted_yaml[6].indent, 10)
+        self.assertEqual(formatted_yaml[9].indent, 8)
+        self.assertEqual(formatted_yaml[14].indent, 8)
+        self.assertEqual(formatted_yaml[19].indent, 14)
+        valid_yaml_contents2 = YamlFile('src/tests/test_files/valid_file9.yaml').read_file()
+        yaml2 = Yaml(valid_yaml_contents2)
+        formatted_yaml2 = yaml2.format_yaml()
+        for row in formatted_yaml2:
+            print(row)
+        self.assertEqual(formatted_yaml2[0].indent, 0)
+        self.assertEqual(formatted_yaml2[1].indent, 2)
+        self.assertEqual(formatted_yaml2[6].indent, 10)
+        self.assertEqual(formatted_yaml2[9].indent, 8)
+        self.assertEqual(formatted_yaml2[14].indent, 8)
+        self.assertEqual(formatted_yaml2[19].indent, 14)
 
 
 if __name__ == "__main__":

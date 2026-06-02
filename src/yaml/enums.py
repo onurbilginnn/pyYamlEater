@@ -6,6 +6,7 @@ class YamlKeyCharacter(Enum):
     VERTICALBAR = "|"
     HYPHEN = "- "
     SQUARE = "# "
+    ONLY_SQUARE = "#"
 
 
 class YamlRowType(Enum):

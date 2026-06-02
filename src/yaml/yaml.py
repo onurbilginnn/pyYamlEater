@@ -1,5 +1,6 @@
 from yaml.yaml_row import YamlRow
 from yaml.enums import YamlRowType, YamlKeyCharacter
+from yaml.constants import DEFAULT_INDENT_COUNT
 
 class Yaml:
     def __init__(self, raw_lines: list[str]):
@@ -8,7 +9,10 @@ class Yaml:
         self.raw_lines = raw_lines
         self.yaml_rows = self.parse_yaml_rows()
         self.root_indent = self.yaml_rows[0].indent
-    
+        self.validate_yaml()
+        self.find_row_levels()
+
+
     def parse_yaml_rows(self) -> list[YamlRow]:
         yaml_rows = []
         index = 0
@@ -19,7 +23,11 @@ class Yaml:
                 index += 1
                 line_number += 1
                 continue
-            yaml_row = YamlRow(line[:-1], line_number)
+            updated_line = line[:-1] if index < len(self.raw_lines) - 1 else line
+            yaml_row = YamlRow(updated_line, line_number)
+            if yaml_row.type == YamlRowType.COMMENT:
+                index += 1
+                continue
             if yaml_row.type == YamlRowType.KEY_VALUE_ON_NEXT_LINE or \
                yaml_row.type == YamlRowType.ARRAY_ITEM_VALUE_ON_NEXT_LINE:
                 key, _ = yaml_row.key_value
@@ -72,6 +80,38 @@ class Yaml:
             if self.does_child_text_has_lower_indent(current_row, next_row):
                 raise ValueError(f"Error: Child text item can not have lower indent than parent item, key: {current_row.key_value[0]} at line: {current_row.line_number}")
 
+    def find_row_levels(self):
+        for index, current_row in enumerate(self.yaml_rows):
+            previous_row = self.yaml_rows[index - 1] if index > 0 else None
+            if current_row.indent == self.root_indent:
+                current_row.level = 1
+            elif previous_row and current_row.indent > previous_row.indent:
+                current_row.level = previous_row.level + 1
+            elif previous_row and current_row.indent == previous_row.indent:
+                current_row.level = previous_row.level
+            elif previous_row and current_row.indent < previous_row.indent:
+                for pre_row in self.yaml_rows[:index -1]:
+                    if pre_row.indent == current_row.indent:
+                        current_row.level = pre_row.level
+                        break
+  
+    def format_yaml(self):
+        formatted_yaml_rows = []
+        for index, current_row in enumerate(self.yaml_rows):
+            previous_row = self.yaml_rows[index - 1] if index > 0 else None
+            if index == 0:
+                current_row.indent = 0
+            elif previous_row and current_row.level > previous_row.level:
+                current_row.indent = previous_row.indent + DEFAULT_INDENT_COUNT
+            elif previous_row and current_row.level == previous_row.level:
+                current_row.indent = previous_row.indent
+            elif previous_row and current_row.level < previous_row.level:
+                level_diff = previous_row.level - current_row.level
+                current_row.indent = previous_row.indent - (DEFAULT_INDENT_COUNT * level_diff)
+            formatted_yaml_rows.append(current_row)
+        return formatted_yaml_rows
+            
+    
     def is_current_indent_lower_than_root(self, current_row: YamlRow) -> bool:
         return current_row.indent < self.root_indent
     
@@ -89,6 +129,7 @@ class Yaml:
                 current_row.type == YamlRowType.ARRAY_ITEM_WITH_VALUE or \
                 current_row.type == YamlRowType.ARRAY_ITEM_WITH_NESTED_KEYS or \
                 current_row.type == YamlRowType.ARRAY_ITEM_VALUE_ON_NEXT_LINE
+
     
     def __repr__(self):
         result = ""

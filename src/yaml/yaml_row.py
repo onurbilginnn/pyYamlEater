@@ -66,13 +66,22 @@ class YamlRow:
         if key.endswith(YamlRowEndsWith.COLON.value):
             key = key[:-1].strip()
             value = YamlKeyCharacter.ONLY_COLON.value
+        if YamlKeyCharacter.SQUARE.value in value:
+            modified_value = ""
+            for char in value:
+                if char == YamlKeyCharacter.ONLY_SQUARE.value:
+                    return key, modified_value.strip()
+                else:
+                    modified_value += char
         return key, value
     
     def is_array_related_row(self, stripped_raw: str) -> bool:
         return stripped_raw.startswith(YamlKeyCharacter.HYPHEN.value)
     
     def should_raise_error(self, stripped_raw: str) -> bool:
-        return not YamlKeyCharacter.COLON.value in stripped_raw and not stripped_raw.endswith(YamlKeyCharacter.ONLY_COLON.value)
+        return not YamlKeyCharacter.COLON.value in stripped_raw and \
+               not stripped_raw.endswith(YamlKeyCharacter.ONLY_COLON.value) and \
+               not stripped_raw.startswith(YamlKeyCharacter.SQUARE.value)
 
     def __repr__(self):        
         return f"line number= {self.line_number}, indent= {self.indent}, key= {self.key_value[0]}, value= {self.key_value[1]}, type= {self.type}, level= {self.level}"
