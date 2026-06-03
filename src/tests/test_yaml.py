@@ -35,6 +35,7 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(yaml5.yaml_rows[15].type, YamlRowType.KEY_WITH_NESTED_KEYS)
         valid_yaml_contents6 = YamlFile('src/tests/test_files/valid_file7.yaml').read_file()
         yaml6 = Yaml(valid_yaml_contents6)
+        print(yaml6)
         self.assertEqual(yaml6.yaml_rows[16].type, YamlRowType.ARRAY_ITEM_VALUE_ON_NEXT_LINE)
         self.assertEqual(yaml6.yaml_rows[16].key_value[1], "where is my ip\nis it fine")
 
@@ -72,7 +73,9 @@ class TestTextNode(unittest.TestCase):
         valid_yaml_contents2 = YamlFile('src/tests/test_files/valid_file5.yaml').read_file()
         yaml2 = Yaml(valid_yaml_contents2)
         yaml2.validate_yaml()
-    
+        valid_yaml_contents3 = YamlFile('src/tests/test_files/formatted_file7.yaml').read_file()
+        yaml3 = Yaml(valid_yaml_contents3)
+        yaml3.validate_yaml()
         
     def test_find_yaml_levels(self):
         valid_yaml_contents = YamlFile('src/tests/test_files/valid_file5.yaml').read_file()
@@ -105,8 +108,6 @@ class TestTextNode(unittest.TestCase):
         valid_yaml_contents2 = YamlFile('src/tests/test_files/valid_file9.yaml').read_file()
         yaml2 = Yaml(valid_yaml_contents2)
         formatted_yaml2 = yaml2.format_yaml()
-        for row in formatted_yaml2:
-            print(row)
         self.assertEqual(formatted_yaml2[0].indent, 0)
         self.assertEqual(formatted_yaml2[1].indent, 2)
         self.assertEqual(formatted_yaml2[6].indent, 10)
