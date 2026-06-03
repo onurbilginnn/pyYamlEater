@@ -14,6 +14,7 @@ all:
               ip: <VALUE>
           management_network2:
             network1:
+              - test
               - networking: |
                  where is my ip
                   is it fine
